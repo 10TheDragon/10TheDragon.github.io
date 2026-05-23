@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>10TheDragon</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJASURBVHgB7ZdNbtNAFMf/M/ZHnDhOCKQSqKhCYsECIbHrAXoC4AQt3AA4AXACuAGcoGwQC1asEBILhISE1KZJbMf2eIaXF9fGcZzUVVWJ8pNG9nge/8bvzZsZQkRERETcBnRLWFpaOlBKHRJRB0AXwD6ANoCdIAg6SZKklFLHzGxYa30MYElrfbKxsfHzpj5I/wfm5+c/SCk/A3gKYAmAo2naVVW5LMuEcy5IKV0AC0KIeSHEst/MWnsE4I2U8mB1dfXHdQykjY2Nr0qp5wAeAdjRWrvz83PT6/VMHMdGa+0AuACgLcsCSil7fn7ujo6OjJTyQGt9BOB9GIZvVldXP11lYHZ29m0QBG8BdJRSTp7n5vj4uPgLaJoGABzH+QtAKQVmNlrrPM9zAJ8AvAuC4O3Kysr7K3sgDMN3Usp3zEyTk5M0Pz9f33Xr6+tomsZalkVJkrhBEJxZa98C+HiVgY7WGgBIa81hGA6NXEbTNBRFAWamlFKdKIrIWvs8iqKLy9/t+JMsyyhNU3Ach6y1lGXZ+OLxODHzU631st/PXGbg9PT0BwCy1tLU1NTI4isrK8jz3ADwkyRZZOaTMXNgjKEoiiiOY5qZmRl5vuu6yLLMAPA55+8552dRFP26agR7nudxHMd0eHiIJEkoSRIopYYV5HkOzjnRhTvO/yGEMAAc13V7SinKsgxRFA0NoygCM0MIkUdRZC8bGFvBbTabn5lZ+oUkz/O/W21mFkII/cdsVsxmY+u4nHNgjDmc8wUzC6WU9n95FhERERH/E38AetO881sEqkQAAAAASUVORK5CYII=">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
@@ -158,6 +159,31 @@
             align-items: center;
             gap: 15px;
             justify-self: end;
+        }
+
+        .page-indicator-dots {
+            display: none;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .page-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        body.light-theme .page-dot {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .page-dot.active {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-highlight);
+            box-shadow: 0 0 10px var(--glow-color);
         }
 
         .folder-tab {
@@ -382,7 +408,7 @@
 
         .lastfm-popout {
             position: fixed;
-            left: 20px;
+            left: -320px;
             top: 70px;
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid var(--panel-border-hover);
@@ -390,13 +416,11 @@
             padding: 15px;
             border-radius: 8px;
             z-index: 90;
-            opacity: 0;
-            transform: translateX(-20px);
             transition: all 0.3s ease;
             pointer-events: none;
             max-width: 300px;
             cursor: pointer;
-            display: none;
+            opacity: 0;
         }
 
         body.light-theme .lastfm-popout {
@@ -408,10 +432,13 @@
         }
 
         .lastfm-popout.visible {
+            left: 20px;
             opacity: 1;
-            transform: translateX(0);
             pointer-events: auto;
-            display: block;
+        }
+
+        .lastfm-popout.fading {
+            opacity: 0;
         }
 
         .lastfm-popout:hover {
@@ -631,10 +658,13 @@
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 5;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .page-content.active {
             display: block;
+            opacity: 1;
         }
 
         .page-content.with-subnav {
@@ -729,6 +759,8 @@
             cursor: pointer;
             text-decoration: none;
             color: inherit;
+            position: relative;
+            z-index: 10;
         }
 
         .lastfm-embed:hover {
@@ -1014,10 +1046,14 @@
         .arrow-indicators {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: none;
             gap: 8px;
             z-index: 50;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 300px;
         }
 
         .arrow-indicators.visible {
@@ -1036,12 +1072,225 @@
             font-size: 16px;
             opacity: 0;
             transition: all 0.15s ease;
+            cursor: pointer;
         }
 
         .arrow-key.active {
             opacity: 1;
             background: var(--glow-color);
             box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        .projects-grid,
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .project-card,
+        .character-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .character-card-link {
+            flex: 1;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toyhouse-link {
+            color: var(--accent-highlight);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 15px 20px;
+            display: inline-block;
+            transition: opacity 0.2s;
+        }
+
+        .toyhouse-link:hover {
+            opacity: 0.8;
+        }
+
+        .project-card:hover,
+        .character-card:hover {
+            border-color: var(--panel-border-hover);
+            box-shadow: 0 0 30px var(--glow-color);
+            transform: translateY(-5px);
+        }
+
+        .project-image,
+        .character-image {
+            width: 100%;
+            height: 250px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-size: 48px;
+            border-bottom: 1px solid var(--panel-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-placeholder {
+            color: var(--text-muted);
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 200, 150, 0.05);
+            border: 2px dashed rgba(0, 200, 150, 0.3);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .image-carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--panel-border-hover);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .image-carousel-btn:hover {
+            background: rgba(0, 200, 150, 0.3);
+            border-color: var(--accent-highlight);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        .image-carousel-btn.prev {
+            left: 10px;
+        }
+
+        .image-carousel-btn.next {
+            right: 10px;
+        }
+
+        .project-content,
+        .character-content {
+            padding: 25px;
+        }
+
+        .project-title,
+        .character-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent-highlight);
+            margin-bottom: 10px;
+        }
+
+        body.light-theme .project-title,
+        body.light-theme .character-name {
+            color: #00785f;
+        }
+
+        .project-date {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 15px;
+        }
+
+        body.light-theme .project-date {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .project-description,
+        .character-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .character-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .character-tag {
+            padding: 6px 14px;
+            background: rgba(0, 200, 150, 0.1);
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-highlight);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--accent-highlight);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 0.7;
+        }
+
+        .character-detail-page {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .character-detail-image {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .character-detail-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .character-detail-page {
+                grid-template-columns: 1fr;
+            }
         }
 
         .mobile-menu {
@@ -1123,56 +1372,6 @@
             transition: all 0.2s ease;
         }
 
-        .mobile-bottom-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--panel-border);
-            padding: 10px 20px;
-            z-index: 90;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        body.light-theme .mobile-bottom-nav {
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        body.grey-theme .mobile-bottom-nav {
-            background: rgba(90, 90, 90, 0.95);
-        }
-
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 12px;
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border-radius: 8px;
-        }
-
-        body.light-theme .bottom-nav-item {
-            color: rgba(0, 0, 0, 0.6);
-        }
-
-        .bottom-nav-item .icon {
-            font-size: 20px;
-        }
-
-        .bottom-nav-item.active {
-            color: var(--accent-highlight);
-            background: var(--panel-bg);
-        }
-
         @media (max-width: 768px) {
             .folder-nav {
                 grid-template-columns: auto 1fr auto;
@@ -1197,16 +1396,12 @@
                 display: none;
             }
 
-            .mobile-menu {
-                display: block;
-            }
-
-            .mobile-bottom-nav {
+            .page-indicator-dots {
                 display: flex;
             }
 
-            .page-content {
-                bottom: 60px;
+            .mobile-menu {
+                display: block;
             }
 
             .sub-nav {
@@ -1231,6 +1426,11 @@
                 grid-template-columns: 1fr;
             }
 
+            .projects-grid,
+            .characters-grid {
+                grid-template-columns: 1fr;
+            }
+
             .nav-left,
             .nav-right {
                 gap: 8px;
@@ -1249,9 +1449,26 @@
             }
 
             .lastfm-popout {
-                left: 10px;
-                top: 60px;
-                max-width: calc(100% - 20px);
+                max-width: calc(100% - 40px);
+            }
+
+            .lastfm-popout.visible {
+                left: 20px;
+            }
+
+            /* Mobile-friendly carousel buttons */
+            .image-carousel-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+            }
+
+            .image-carousel-btn.prev {
+                left: 5px;
+            }
+
+            .image-carousel-btn.next {
+                right: 5px;
             }
         }
     </style>
@@ -1325,12 +1542,12 @@
 
     <div class="mobile-menu" id="mobile-menu">
         <button class="mobile-menu-close" id="mobile-menu-close">×</button>
-        <a href="#" class="mobile-menu-item active" data-page="home">🏠 Home</a>
-        <a href="#" class="mobile-menu-item" data-page="links">🔗 Links</a>
-        <a href="#" class="mobile-menu-item" data-page="projects">💼 Projects</a>
-        <a href="#" class="mobile-menu-item" data-page="characters">👤 Characters</a>
-        <a href="#" class="mobile-menu-item" data-page="commissions">💰 Commissions</a>
-        <a href="#" class="mobile-menu-item" data-page="other">📦 Other</a>
+        <a href="#/" class="mobile-menu-item active" data-page="home">🏠 Home</a>
+        <a href="#/links" class="mobile-menu-item" data-page="links">🔗 Links</a>
+        <a href="#/projects" class="mobile-menu-item" data-page="projects">💼 Projects</a>
+        <a href="#/characters" class="mobile-menu-item" data-page="characters">👤 Characters</a>
+        <a href="#/commissions" class="mobile-menu-item" data-page="commissions">💰 Commissions</a>
+        <a href="#/other" class="mobile-menu-item" data-page="other">📦 Other</a>
     </div>
 
     <nav class="folder-nav">
@@ -1341,6 +1558,14 @@
                 <span></span>
             </button>
             <button id="settings-trigger" class="settings-trigger">⚙</button>
+            <div class="page-indicator-dots" id="page-dots">
+                <div class="page-dot active" data-page="home"></div>
+                <div class="page-dot" data-page="links"></div>
+                <div class="page-dot" data-page="projects"></div>
+                <div class="page-dot" data-page="characters"></div>
+                <div class="page-dot" data-page="commissions"></div>
+                <div class="page-dot" data-page="other"></div>
+            </div>
         </div>
         
         <div class="nav-tabs">
@@ -1354,7 +1579,7 @@
 
         <div class="nav-right">
             <button id="theme-toggle" class="theme-btn" title="Toggle theme">
-                <span class="theme-icon">🔄</span>
+                <span class="theme-icon">⏳</span>
             </button>
             <div id="cst-time" class="time-display">00:00</div>
         </div>
@@ -1363,7 +1588,7 @@
     <nav class="sub-nav" id="links-subnav">
         <button class="sub-tab active" data-subpage="general">Links</button>
         <button class="sub-tab" data-subpage="nsfw">NSFW / 18+</button>
-        <button class="sub-tab hidden" data-subpage="secret" id="secret-tab">Secret NSFW / 18+ 🐉</button>
+        <button class="sub-tab hidden" data-subpage="secret" id="secret-tab">Secret NSFW / 18+</button>
     </nav>
 
     <main class="page-content active" id="page-home">
@@ -1413,12 +1638,12 @@
                     <a href="https://www.tumblr.com/blog/10thedragon" class="link-item link-tumblr" target="_blank">Tumblr</a>
                     <a href="https://www.reddit.com/user/10thedragon/" class="link-item link-reddit" target="_blank">Reddit</a>
                     <a href="https://letterboxd.com/10TheDragon/" class="link-item link-letterboxd" target="_blank">Letterboxd</a>
+                    <a href="https://www.twitch.tv/10thedragon" class="link-item link-twitch" target="_blank">Twitch</a>
+                    <a href="https://www.youtube.com/channel/UC6X8LvFZZPLAcWIA_RAiGsw" class="link-item link-youtube" target="_blank">YouTube</a>
                 </div>
 
                 <h2 class="section-title">Creative</h2>
                 <div class="links-grid">
-                    <a href="https://www.twitch.tv/10thedragon" class="link-item link-twitch" target="_blank">Twitch</a>
-                    <a href="https://www.youtube.com/channel/UC6X8LvFZZPLAcWIA_RAiGsw" class="link-item link-youtube" target="_blank">YouTube</a>
                     <a href="https://artfight.net/~10TheDragon" class="link-item link-artfight" target="_blank">Art Fight</a>
                     <a href="https://toyhou.se/10TheDragon" class="link-item link-toyhouse" target="_blank">Toyhouse</a>
                     <a href="https://www.furaffinity.net/user/10thedragon" class="link-item link-furaffinity" target="_blank">FurAffinity</a>
@@ -1478,7 +1703,7 @@
             </div>
 
             <div class="subpage-content" id="subpage-secret">
-                <h2 class="section-title">🐉 Secret Dragon Hoard 🐉</h2>
+                <h2 class="section-title">Secret Dragon Hoard</h2>
                 <div class="links-grid">
                     <a href="https://www.f-list.net/c/10thedragon" class="link-item link-flist" target="_blank">F-List</a>
                 </div>
@@ -1489,14 +1714,109 @@
     <main class="page-content" id="page-projects">
         <div class="content-container">
             <h1 class="section-title">Projects</h1>
-            <p>Coming soon...</p>
+            <div class="projects-grid">
+                <a href="https://github.com/10TheDragon/bss-values-index" target="_blank" class="project-card">
+                    <div class="project-image">
+                        <div class="image-placeholder">BSS Project Thumbnail (images/bss-thumb.png)</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">BSS Values Index</h3>
+                        <p class="project-date">2026</p>
+                        <p class="project-description">A comprehensive trading tool for Bee Swarm Simulator that tracks item values and demand analytics, with features for sorting items by various metrics. Built as a self-contained HTML application with integrated wiki documentation, powered by the bssmvalues.com API.</p>
+                    </div>
+                </a>
+            </div>
         </div>
     </main>
 
     <main class="page-content" id="page-characters">
         <div class="content-container">
             <h1 class="section-title">Characters</h1>
-            <p>Coming soon...</p>
+            <div class="characters-grid">
+                <div class="character-card" data-character="ten">
+                    <a href="#/characters/ten" class="character-card-link">
+                        <div class="character-image">
+                            <div class="image-placeholder">Ten PFP Placeholder (images/ten-pfp.png)</div>
+                            <button class="image-carousel-btn prev" onclick="changeCharacterImage('ten', -1); event.preventDefault();">❮</button>
+                            <button class="image-carousel-btn next" onclick="changeCharacterImage('ten', 1); event.preventDefault();">❯</button>
+                        </div>
+                        <div class="character-content">
+                            <h3 class="character-name">Ten</h3>
+                            <div class="character-tags">
+                                <span class="character-tag">sona</span>
+                                <span class="character-tag">oc</span>
+                                <span class="character-tag">dragon</span>
+                            </div>
+                            <p class="character-description">The very first sona I ever created. I use him mainly as a representation of me in real life, sharing similar traits and characteristics that are more outwardly shown through him. He is essentially me as he shares my exact age and ideals.</p>
+                        </div>
+                    </a>
+                    <a href="https://toyhou.se/16981375.ten" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
+                </div>
+                <div class="character-card" data-character="js05">
+                    <a href="#/characters/js05" class="character-card-link">
+                        <div class="character-image">
+                            <div class="image-placeholder">JS-05 Image Placeholder 1 (images/js05-1.png)</div>
+                            <button class="image-carousel-btn prev" onclick="changeCharacterImage('js05', -1); event.preventDefault();">❮</button>
+                            <button class="image-carousel-btn next" onclick="changeCharacterImage('js05', 1); event.preventDefault();">❯</button>
+                        </div>
+                        <div class="character-content">
+                            <h3 class="character-name">JS-05 (Jack Smith)</h3>
+                            <div class="character-tags">
+                                <span class="character-tag">oc</span>
+                                <span class="character-tag">protogen</span>
+                                <span class="character-tag">robot</span>
+                            </div>
+                            <p class="character-description">Jack Smith is an elusive and rare entity to encounter in the facility. He will cause blackouts and is hard to escape from as he tricks his victims with his glitching-like behavior. Don't let him catch you. Once you are doomed and in complete darkness, he will appear.</p>
+                        </div>
+                    </a>
+                    <a href="https://toyhou.se/25017744.jack-smith" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Individual Character Pages -->
+    <main class="page-content" id="page-characters-ten">
+        <div class="content-container">
+            <a href="#/characters" class="back-link">← Back to Characters</a>
+            <h1 class="section-title">Ten</h1>
+            <div class="character-detail-page">
+                <div class="character-detail-image">
+                    <div class="image-placeholder" style="font-size: 16px;">Ten Full Art Placeholder (images/ten-full.png)</div>
+                </div>
+                <div class="character-detail-content">
+                    <div class="character-tags">
+                        <span class="character-tag">sona</span>
+                        <span class="character-tag">oc</span>
+                        <span class="character-tag">dragon</span>
+                    </div>
+                    <p class="character-description">The very first sona I ever created. I use him mainly as a representation of me in real life, sharing similar traits and characteristics that are more outwardly shown through him. He is essentially me as he shares my exact age and ideals.</p>
+                    <a href="https://toyhou.se/16981375.ten" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 40px;">More content coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main class="page-content" id="page-characters-js05">
+        <div class="content-container">
+            <a href="#/characters" class="back-link">← Back to Characters</a>
+            <h1 class="section-title">JS-05 (Jack Smith)</h1>
+            <div class="character-detail-page">
+                <div class="character-detail-image">
+                    <div class="image-placeholder" style="font-size: 16px;">JS-05 Full Art Placeholder (images/js05-full.png)</div>
+                </div>
+                <div class="character-detail-content">
+                    <div class="character-tags">
+                        <span class="character-tag">oc</span>
+                        <span class="character-tag">protogen</span>
+                        <span class="character-tag">robot</span>
+                    </div>
+                    <p class="character-description">Jack Smith is an elusive and rare entity to encounter in the facility. He will cause blackouts and is hard to escape from as he tricks his victims with his glitching-like behavior. Don't let him catch you. Once you are doomed and in complete darkness, he will appear.</p>
+                    <a href="https://toyhou.se/25017744.jack-smith" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 40px;">More content coming soon...</p>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -1519,7 +1839,7 @@
             <div class="error-code">404</div>
             <div class="error-message">Oops! The page you're looking for doesn't exist.</div>
             <div class="error-placeholder">[ Image Placeholder ]</div>
-            <a href="#" class="back-home-btn" onclick="document.querySelector('[data-page=home]').click(); return false;">Back to Home</a>
+            <a href="#/" class="back-home-btn">Back to Home</a>
         </div>
     </main>
 
@@ -1531,25 +1851,6 @@
         <div class="arrow-key" data-key="a">A</div>
         <div class="arrow-key" data-key="b">B</div>
         <div class="arrow-key" data-key="enter">⏎</div>
-    </div>
-
-    <div class="mobile-bottom-nav">
-        <a href="#" class="bottom-nav-item active" data-page="home">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="#" class="bottom-nav-item" data-page="links">
-            <span class="icon">🔗</span>
-            <span>Links</span>
-        </a>
-        <a href="#" class="bottom-nav-item" data-page="projects">
-            <span class="icon">💼</span>
-            <span>Projects</span>
-        </a>
-        <a href="#" class="bottom-nav-item" data-page="other">
-            <span class="icon">📦</span>
-            <span>More</span>
-        </a>
     </div>
 
     <script>
@@ -1757,6 +2058,30 @@
             document.getElementById('popout-total').textContent = formatTime(duration);
         }
 
+        function handleRoute() {
+            const hash = window.location.hash.slice(1) || '/';
+            const parts = hash.split('/').filter(p => p);
+            
+            if (parts.length === 0) {
+                switchPage('home');
+            } else if (parts[0] === 'links') {
+                switchPage('links');
+                if (parts[1]) {
+                    switchSubpage(parts[1]);
+                }
+            } else if (parts[0] === 'secretnsfw') {
+                switchPage('links');
+                switchSubpage('secret');
+            } else if (parts[0] === 'characters' && parts[1]) {
+                // Handle individual character pages
+                switchPage('characters-' + parts[1]);
+            } else {
+                switchPage(parts[0]);
+            }
+        }
+
+        window.addEventListener('hashchange', handleRoute);
+
         document.getElementById('cst-time').addEventListener('click', () => {
             settings.timeFormat = settings.timeFormat === '12h' ? '24h' : '12h';
             saveSettings();
@@ -1848,16 +2173,9 @@
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = item.dataset.page;
-                switchPage(page);
+                window.location.hash = page === 'home' ? '/' : `/${page}`;
                 mobileMenu.classList.remove('active');
                 settingsOverlay.classList.remove('active');
-            });
-        });
-
-        document.querySelectorAll('.bottom-nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                switchPage(item.dataset.page);
             });
         });
 
@@ -1881,9 +2199,9 @@
                 const currentIndex = pages.indexOf(currentPage);
                 
                 if (deltaX > 0 && currentIndex > 0) {
-                    switchPage(pages[currentIndex - 1]);
+                    window.location.hash = pages[currentIndex - 1] === 'home' ? '/' : `/${pages[currentIndex - 1]}`;
                 } else if (deltaX < 0 && currentIndex < pages.length - 1) {
-                    switchPage(pages[currentIndex + 1]);
+                    window.location.hash = `/${pages[currentIndex + 1]}`;
                 }
             }
         }
@@ -1942,8 +2260,8 @@
             document.querySelectorAll('.mobile-menu-item').forEach(item => {
                 item.classList.remove('active');
             });
-            document.querySelectorAll('.bottom-nav-item').forEach(item => {
-                item.classList.remove('active');
+            document.querySelectorAll('.page-dot').forEach(dot => {
+                dot.classList.remove('active');
             });
             
             document.getElementById(`page-${pageName}`).classList.add('active');
@@ -1951,8 +2269,8 @@
             if (desktopTab) desktopTab.classList.add('active');
             const mobileItem = document.querySelector(`.mobile-menu-item[data-page="${pageName}"]`);
             if (mobileItem) mobileItem.classList.add('active');
-            const bottomItem = document.querySelector(`.bottom-nav-item[data-page="${pageName}"]`);
-            if (bottomItem) bottomItem.classList.add('active');
+            const pageDot = document.querySelector(`.page-dot[data-page="${pageName}"]`);
+            if (pageDot) pageDot.classList.add('active');
             
             if (pageName === 'links') {
                 document.getElementById('links-subnav').classList.add('active');
@@ -1994,24 +2312,36 @@
             if (!settings.lastfmDisplay) return;
             
             const popout = document.getElementById('lastfm-popout');
+            popout.classList.remove('fading');
             popout.classList.add('visible');
             
             clearTimeout(lastfmPopoutTimer);
+            
+            setTimeout(() => {
+                popout.classList.add('fading');
+            }, 3000);
+            
             lastfmPopoutTimer = setTimeout(() => {
-                popout.classList.remove('visible');
+                popout.classList.remove('visible', 'fading');
             }, 5000);
         }
 
         document.querySelectorAll('.folder-tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                switchPage(tab.dataset.page);
+                const page = tab.dataset.page;
+                window.location.hash = page === 'home' ? '/' : `/${page}`;
             });
         });
 
         document.querySelectorAll('.sub-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 if (!tab.classList.contains('hidden')) {
-                    switchSubpage(tab.dataset.subpage);
+                    const subpage = tab.dataset.subpage;
+                    if (subpage === 'secret') {
+                        window.location.hash = '/secretnsfw';
+                    } else {
+                        window.location.hash = `/links/${subpage}`;
+                    }
                 }
             });
         });
@@ -2043,7 +2373,7 @@
             const secretTab = document.getElementById('secret-tab');
             secretTab.classList.add('hidden');
             if (currentSubpage === 'secret') {
-                switchSubpage('general');
+                window.location.hash = '/links/general';
             }
         }
 
@@ -2203,6 +2533,36 @@
             }
         });
 
+        document.querySelectorAll('.arrow-key').forEach(key => {
+            key.addEventListener('click', () => {
+                if (currentSubpage !== 'nsfw' || !settings.nsfwAccepted || settings.konamiCooldown > Date.now()) return;
+                
+                const keyType = key.dataset.key;
+                let codeKey;
+                
+                if (keyType === 'up') codeKey = 'ArrowUp';
+                else if (keyType === 'down') codeKey = 'ArrowDown';
+                else if (keyType === 'left') codeKey = 'ArrowLeft';
+                else if (keyType === 'right') codeKey = 'ArrowRight';
+                else if (keyType === 'a') codeKey = 'a';
+                else if (keyType === 'b') codeKey = 'b';
+                else if (keyType === 'enter') codeKey = 'Enter';
+                
+                key.classList.add('active');
+                setTimeout(() => key.classList.remove('active'), 200);
+                
+                if (codeKey === konamiCode[konamiIndex]) {
+                    konamiIndex++;
+                    if (konamiIndex === konamiCode.length) {
+                        triggerKonamiCode();
+                        konamiIndex = 0;
+                    }
+                } else {
+                    konamiIndex = 0;
+                }
+            });
+        });
+
         function triggerKonamiCode() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
@@ -2235,10 +2595,39 @@
             startKonamiExpiration();
         }
 
+        const characterImages = {
+            'ten': [
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJASURBVHgB7ZdNbtNAFMf/M/ZHnDhOCKQSqKhCYsECIbHrAXoC4AQt3AA4AXACuAGcoGwQC1asEBILhISE1KZJbMf2eIaXF9fGcZzUVVWJ8pNG9nge/8bvzZsZQkRERETcBnRLWFpaOlBKHRJRB0AXwD6ANoCdIAg6SZKklFLHzGxYa30MYElrfbKxsfHzpj5I/wfm5+c/SCk/A3gKYAmAo2naVVW5LMuEcy5IKV0AC0KIeSHEst/MWnsE4I2U8mB1dfXHdQykjY2Nr0qp5wAeAdjRWrvz83PT6/VMHMdGa+0AuACgLcsCSil7fn7ujo6OjJTyQGt9BOB9GIZvVldXP11lYHZ29m0QBG8BdJRSTp7n5vj4uPgLaJoGABzH+QtAKQVmNlrrPM9zAJ8AvAuC4O3Kysr7K3sgDMN3Usp3zEyTk5M0Pz9f33Xr6+tomsZalkVJkrhBEJxZa98C+HiVgY7WGgBIa81hGA6NXEbTNBRFAWamlFKdKIrIWvs8iqKLy9/t+JMsyyhNU3Ach6y1lGXZ+OLxODHzU631st/PXGbg9PT0BwCy1tLU1NTI4isrK8jz3ADwkyRZZOaTMXNgjKEoiiiOY5qZmRl5vuu6yLLMAPA55+8552dRFP26agR7nudxHMd0eHiIJEkoSRIopYYV5HkOzjnRhTvO/yGEMAAc13V7SinKsgxRFA0NoygCM0MIkUdRZC8bGFvBbTabn5lZ+oUkz/O/W21mFkII/cdsVsxmY+u4nHNgjDmc8wUzC6WU9n95FhERERH/E38AetO881sEqkQAAAAASUVORK5CYII='
+            ],
+            'js05': []
+        };
+
+        let characterImageIndices = {
+            'ten': 0,
+            'js05': 0
+        };
+
+        function changeCharacterImage(characterId, direction) {
+            const images = characterImages[characterId];
+            if (images.length <= 1) return;
+            
+            characterImageIndices[characterId] = (characterImageIndices[characterId] + direction + images.length) % images.length;
+            
+            const card = document.querySelector(`.character-card[data-character="${characterId}"]`);
+            const img = card.querySelector('.character-carousel-image');
+            
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = images[characterImageIndices[characterId]];
+                img.style.opacity = '1';
+            }, 150);
+        }
+
         loadSettings();
         setRandomTagline();
         updateTimeDisplay();
         fetchLastFM();
+        handleRoute();
 
         setInterval(updateTimeDisplay, 1000);
         setInterval(() => {
