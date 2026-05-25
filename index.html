@@ -47,8 +47,7 @@
         body {
             font-family: var(--font-main);
             color: var(--text-color);
-            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-            transition: background 0.5s ease;
+            background: #000000;
             position: relative;
         }
 
@@ -1470,6 +1469,15 @@
             .image-carousel-btn.next {
                 right: 5px;
             }
+
+            /* Ensure background covers on mobile */
+            .parallax-bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
         }
     </style>
 </head>
@@ -2059,7 +2067,7 @@
         }
 
         function handleRoute() {
-            const hash = window.location.hash.slice(1) || '/';
+            const hash = window.location.hash.slice(1) || '';
             const parts = hash.split('/').filter(p => p);
             
             if (parts.length === 0) {
@@ -2173,7 +2181,7 @@
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = item.dataset.page;
-                window.location.hash = page === 'home' ? '/' : `/${page}`;
+                window.location.hash = page === 'home' ? '' : page;
                 mobileMenu.classList.remove('active');
                 settingsOverlay.classList.remove('active');
             });
@@ -2199,9 +2207,9 @@
                 const currentIndex = pages.indexOf(currentPage);
                 
                 if (deltaX > 0 && currentIndex > 0) {
-                    window.location.hash = pages[currentIndex - 1] === 'home' ? '/' : `/${pages[currentIndex - 1]}`;
+                    window.location.hash = pages[currentIndex - 1] === 'home' ? '' : pages[currentIndex - 1];
                 } else if (deltaX < 0 && currentIndex < pages.length - 1) {
-                    window.location.hash = `/${pages[currentIndex + 1]}`;
+                    window.location.hash = pages[currentIndex + 1];
                 }
             }
         }
@@ -2329,7 +2337,7 @@
         document.querySelectorAll('.folder-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 const page = tab.dataset.page;
-                window.location.hash = page === 'home' ? '/' : `/${page}`;
+                window.location.hash = page === 'home' ? '' : page;
             });
         });
 
@@ -2338,9 +2346,9 @@
                 if (!tab.classList.contains('hidden')) {
                     const subpage = tab.dataset.subpage;
                     if (subpage === 'secret') {
-                        window.location.hash = '/secretnsfw';
+                        window.location.hash = 'secretnsfw';
                     } else {
-                        window.location.hash = `/links/${subpage}`;
+                        window.location.hash = `links/${subpage}`;
                     }
                 }
             });
@@ -2373,7 +2381,7 @@
             const secretTab = document.getElementById('secret-tab');
             secretTab.classList.add('hidden');
             if (currentSubpage === 'secret') {
-                window.location.hash = '/links/general';
+                window.location.hash = 'links/general';
             }
         }
 
@@ -2479,7 +2487,15 @@
                     const isPlaying = track['@attr'] && track['@attr'].nowplaying;
                     
                     if (isPlaying) {
-                        const albumArt = track.image && track.image[2] ? track.image[2]['#text'] : USER_AVATAR;
+                        // Try to get album art from different sizes, fallback to user avatar
+                        let albumArt = USER_AVATAR;
+                        if (track.image && track.image.length > 0) {
+                            // Try large (index 3), then medium (index 2), then small (index 1)
+                            const largeImg = track.image[3] ? track.image[3]['#text'] : '';
+                            const mediumImg = track.image[2] ? track.image[2]['#text'] : '';
+                            const smallImg = track.image[1] ? track.image[1]['#text'] : '';
+                            albumArt = largeImg || mediumImg || smallImg || USER_AVATAR;
+                        }
                         const duration = track.duration ? parseInt(track.duration) : 0;
                         updatePlayers(true, track.name, track.artist['#text'] || track.artist, track.url, albumArt, duration);
                     } else {
