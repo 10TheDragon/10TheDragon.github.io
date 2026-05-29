@@ -47,7 +47,7 @@
         body {
             font-family: var(--font-main);
             color: var(--text-color);
-            background: #000000;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             position: relative;
         }
 
@@ -82,14 +82,13 @@
 
         .parallax-bg {
             position: fixed;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             transition: background 0.5s ease;
             z-index: -1;
-            will-change: transform;
         }
 
         .star-container {
@@ -125,19 +124,20 @@
             align-items: center;
             gap: 20px;
             z-index: 90;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.1));
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
             border-bottom: 1px solid var(--panel-border);
             padding: 0 20px;
             height: 58px;
         }
 
         body.light-theme .folder-nav {
-            background: rgba(255, 255, 255, 0.5);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
         }
 
         body.grey-theme .folder-nav {
-            background: rgba(90, 90, 90, 0.5);
+            background: linear-gradient(to bottom, rgba(90, 90, 90, 0.25), rgba(90, 90, 90, 0.1));
         }
 
         .nav-left {
@@ -580,19 +580,20 @@
             justify-content: center;
             gap: 0;
             z-index: 89;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.06));
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
             border-bottom: 1px solid var(--panel-border);
             padding: 0 20px;
             height: 46px;
         }
 
         body.light-theme .sub-nav {
-            background: rgba(255, 255, 255, 0.4);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
         }
 
         body.grey-theme .sub-nav {
-            background: rgba(90, 90, 90, 0.4);
+            background: linear-gradient(to bottom, rgba(90, 90, 90, 0.18), rgba(90, 90, 90, 0.07));
         }
 
         .sub-nav.active {
@@ -650,7 +651,7 @@
         .page-content {
             display: none;
             position: fixed;
-            top: 60px;
+            top: 0;
             left: 0;
             right: 0;
             bottom: 0;
@@ -666,15 +667,16 @@
             opacity: 1;
         }
 
-        .page-content.with-subnav {
-            top: 104px;
-        }
-
         .content-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 98px 20px 60px;
             text-align: center;
+        }
+
+        /* Pages with the secondary nav bar need extra top clearance */
+        .page-content.with-subnav .content-container {
+            padding-top: 144px;
         }
 
         .landing-page {
@@ -682,7 +684,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100%;
-            padding: 40px 20px;
+            padding: 78px 20px 40px;
         }
 
         .landing-content {
@@ -1168,25 +1170,34 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--panel-border-hover);
+            background: var(--panel-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--panel-border);
             color: var(--text-color);
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            opacity: 0.55;
             z-index: 10;
         }
 
         .image-carousel-btn:hover {
-            background: rgba(0, 200, 150, 0.3);
+            background: rgba(0, 200, 150, 0.25);
             border-color: var(--accent-highlight);
             box-shadow: 0 0 15px var(--glow-color);
+            opacity: 1;
+        }
+
+        /* Make arrows clearly visible while a card is hovered/touched */
+        .character-card:hover .image-carousel-btn {
+            opacity: 0.85;
         }
 
         .image-carousel-btn.prev {
@@ -1379,12 +1390,16 @@
                 height: 50px;
             }
 
-            .page-content {
-                top: 50px;
+            .content-container {
+                padding-top: 78px;
             }
 
-            .page-content.with-subnav {
-                top: 92px;
+            .page-content.with-subnav .content-container {
+                padding-top: 116px;
+            }
+
+            .landing-page {
+                padding-top: 66px;
             }
 
             .hamburger {
@@ -1455,19 +1470,20 @@
                 left: 20px;
             }
 
-            /* Mobile-friendly carousel buttons */
+            /* Mobile-friendly carousel buttons: larger tap target, always visible */
             .image-carousel-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 24px;
+                width: 52px;
+                height: 52px;
+                font-size: 22px;
+                opacity: 0.8;
             }
 
             .image-carousel-btn.prev {
-                left: 5px;
+                left: 8px;
             }
 
             .image-carousel-btn.next {
-                right: 5px;
+                right: 8px;
             }
 
             /* Ensure background covers on mobile */
@@ -1531,10 +1547,9 @@
     <a href="https://www.last.fm/user/TenTheDragon" target="_blank" class="lastfm-popout" id="lastfm-popout">
         <div class="lastfm-popout-content">
             <div class="lastfm-player-top">
-                <img src="https://lastfm.freetls.fastly.net/i/u/avatar170s/3f4ac4dbeaf38298067d394ef3c43519.png" class="album-art" alt="Album art">
-                <div class="track-info">
+                <div class="track-info" style="text-align: center; width: 100%;">
                     <p class="track-name">Nothing playing</p>
-                    <p class="track-artist">nothing's playing</p>
+                    <p class="track-artist" style="font-size: 12px; opacity: 0.6;">Check Last.fm</p>
                 </div>
             </div>
             <div class="progress-bar-container" id="popout-progress" style="display: none;">
@@ -1611,10 +1626,9 @@
                         [ Image Placeholder ]
                         <a href="https://www.last.fm/user/TenTheDragon" target="_blank" class="lastfm-embed" id="lastfm-player">
                             <div class="lastfm-embed-top">
-                                <img src="https://lastfm.freetls.fastly.net/i/u/avatar170s/3f4ac4dbeaf38298067d394ef3c43519.png" class="album-art" alt="Album art">
-                                <div class="track-info">
+                                <div class="track-info" style="text-align: center; width: 100%;">
                                     <p class="track-name">Loading...</p>
-                                    <p class="track-artist">nothing's playing</p>
+                                    <p class="track-artist" style="font-size: 12px; opacity: 0.6;">Check Last.fm</p>
                                 </div>
                             </div>
                             <div class="progress-bar-container" id="player-progress" style="display: none;">
@@ -1871,7 +1885,8 @@
 
         const API_KEY = atob("NzQyN2NmNDJkNmU1MGViNDMyOGIwYWFmYzc3NDUzNmI=");
         const LASTFM_USER = 'TenTheDragon';
-        const USER_AVATAR = 'https://lastfm.freetls.fastly.net/i/u/avatar170s/3f4ac4dbeaf38298067d394ef3c43519.png';
+        // Generic album-art fallback shown when a track has no cover image
+        const ALBUM_ART_FALLBACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%2300a083" width="100" height="100"/%3E%3Ctext x="50" y="60" font-size="40" text-anchor="middle" fill="%23fff"%3E♪%3C/text%3E%3C/svg%3E';
 
         let settings = {
             accessibilityFont: false,
@@ -2216,17 +2231,10 @@
         }
 
         function updateParallax() {
-            if (settings.reduceMotion) return;
-            // Disable parallax on mobile (screens narrower than 768px)
-            if (window.innerWidth <= 768) return;
-            
-            const scrollContainers = document.querySelectorAll('.page-content.active');
-            scrollContainers.forEach(container => {
-                const scrollY = container.scrollTop;
-                const parallaxBg = document.getElementById('parallax-bg');
-                const offset = scrollY * 0.5;
-                parallaxBg.style.transform = `translate3d(0, ${offset}px, 0)`;
-            });
+            // Parallax movement disabled - it caused a visible seam where the
+            // moving gradient layer revealed the static body gradient underneath.
+            // Background now stays fully static across all themes/devices.
+            return;
         }
 
         document.querySelectorAll('.page-content').forEach(content => {
@@ -2488,17 +2496,14 @@
                     const isPlaying = track['@attr'] && track['@attr'].nowplaying;
                     
                     if (isPlaying) {
-                        // Try to get album art from different sizes, fallback to generic music icon
-                        let albumArt = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%2300a083" width="100" height="100"/%3E%3Ctext x="50" y="60" font-size="40" text-anchor="middle" fill="%23fff"%3E♪%3C/text%3E%3C/svg%3E';
+                        // Use the largest available cover; fall back to a music-note icon
+                        let albumArt = ALBUM_ART_FALLBACK;
                         if (track.image && track.image.length > 0) {
-                            // Try large (index 3), then medium (index 2), then small (index 1)
                             const largeImg = track.image[3] ? track.image[3]['#text'] : '';
                             const mediumImg = track.image[2] ? track.image[2]['#text'] : '';
                             const smallImg = track.image[1] ? track.image[1]['#text'] : '';
-                            const anyImg = largeImg || mediumImg || smallImg;
-                            if (anyImg && anyImg.trim() !== '') {
-                                albumArt = anyImg;
-                            }
+                            const anyImg = (largeImg || mediumImg || smallImg || '').trim();
+                            if (anyImg) albumArt = anyImg;
                         }
                         const duration = track.duration ? parseInt(track.duration) : 0;
                         updatePlayers(true, track.name, track.artist['#text'] || track.artist, track.url, albumArt, duration);
