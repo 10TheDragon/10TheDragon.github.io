@@ -495,6 +495,123 @@
             color: rgba(0, 0, 0, 0.6);
         }
 
+        /* ===== Events Popout ===== */
+        .events-popout {
+            position: fixed;
+            left: -360px;
+            top: 150px;
+            background: rgba(15, 15, 15, 0.55);
+            border: 1px solid var(--event-accent, #5acae9);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 90;
+            transition: background 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease, left 0.4s ease, opacity 0.4s ease;
+            pointer-events: none;
+            max-width: 320px;
+            opacity: 0;
+        }
+
+        body.light-theme .events-popout {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body.grey-theme .events-popout {
+            background: rgba(90, 90, 90, 0.5);
+        }
+
+        .events-popout.visible {
+            left: 20px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .events-popout.fading {
+            opacity: 0;
+        }
+
+        .events-popout-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .events-popout-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--event-accent, #5acae9);
+        }
+
+        .events-popout-close {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.6;
+            padding: 0 0 0 10px;
+            transition: opacity 0.2s ease;
+        }
+
+        .events-popout-close:hover {
+            opacity: 1;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .event-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            border: 2px solid var(--event-accent, #5acae9);
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(90, 202, 233, 0.4);
+            object-fit: cover;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .event-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .event-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+            color: var(--text-color);
+        }
+
+        .event-desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.4;
+        }
+
+        body.light-theme .event-desc {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .event-item:hover .event-title {
+            color: var(--event-accent, #5acae9);
+        }
+
+        .event-item:hover .event-icon {
+            box-shadow: 0 0 22px rgba(90, 202, 233, 0.7);
+        }
+
         .progress-bar-container {
             width: 100%;
             display: flex;
@@ -838,6 +955,7 @@
         .link-tumblr { background: rgba(53, 70, 92, 0.1); border-color: rgba(53, 70, 92, 0.2); }
         .link-reddit { background: rgba(255, 69, 0, 0.1); border-color: rgba(255, 69, 0, 0.2); }
         .link-letterboxd { background: rgba(20, 189, 197, 0.1); border-color: rgba(20, 189, 197, 0.2); }
+        .link-backloggd { background: rgba(98, 70, 156, 0.1); border-color: rgba(98, 70, 156, 0.2); }
         .link-twitch { background: rgba(145, 70, 255, 0.1); border-color: rgba(145, 70, 255, 0.2); }
         .link-youtube { background: rgba(255, 0, 0, 0.1); border-color: rgba(255, 0, 0, 0.2); }
         .link-artfight { background: rgba(72, 187, 144, 0.1); border-color: rgba(72, 187, 144, 0.2); }
@@ -875,6 +993,7 @@
         .link-tumblr:hover { background: rgba(53, 70, 92, 0.3); border-color: rgba(53, 70, 92, 0.6); }
         .link-reddit:hover { background: rgba(255, 69, 0, 0.3); border-color: rgba(255, 69, 0, 0.6); }
         .link-letterboxd:hover { background: rgba(20, 189, 197, 0.3); border-color: rgba(20, 189, 197, 0.6); }
+        .link-backloggd:hover { background: rgba(98, 70, 156, 0.3); border-color: rgba(98, 70, 156, 0.6); }
         .link-twitch:hover { background: rgba(145, 70, 255, 0.3); border-color: rgba(145, 70, 255, 0.6); }
         .link-youtube:hover { background: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.6); }
         .link-artfight:hover { background: rgba(72, 187, 144, 0.3); border-color: rgba(72, 187, 144, 0.6); }
@@ -1471,6 +1590,14 @@
                 left: 20px;
             }
 
+            .events-popout {
+                max-width: calc(100% - 40px);
+            }
+
+            .events-popout.visible {
+                left: 20px;
+            }
+
             /* Mobile-friendly carousel buttons: larger tap target, always visible */
             .image-carousel-btn {
                 width: 52px;
@@ -1535,6 +1662,13 @@
 
         <div class="setting-group">
             <label class="setting-label">
+                <input type="checkbox" id="events-display" checked>
+                <span>Show Events Popout</span>
+            </label>
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label">
                 <input type="checkbox" id="reduce-motion">
                 <span>Reduce Motion</span>
             </label>
@@ -1564,6 +1698,20 @@
             </div>
         </div>
     </a>
+
+    <div class="events-popout" id="events-popout">
+        <div class="events-popout-header">
+            <span class="events-popout-label" id="events-popout-label">Event</span>
+            <button class="events-popout-close" id="events-popout-close" aria-label="Dismiss">×</button>
+        </div>
+        <a class="event-item" id="events-popout-link" href="#" target="_blank" rel="noopener">
+            <img class="event-icon" id="events-popout-icon" src="" alt="Event">
+            <div class="event-info">
+                <p class="event-title" id="events-popout-title"></p>
+                <p class="event-desc" id="events-popout-desc"></p>
+            </div>
+        </a>
+    </div>
 
     <div class="mobile-menu" id="mobile-menu">
         <button class="mobile-menu-close" id="mobile-menu-close">×</button>
@@ -1654,22 +1802,23 @@
                 <h2 class="section-title">Socials</h2>
                 <div class="links-grid">
                     <a href="https://en.pronouns.page/@10TheDragon" class="link-item link-pronouns" target="_blank">Pronouns.page</a>
+                    <a href="https://www.youtube.com/channel/UC6X8LvFZZPLAcWIA_RAiGsw" class="link-item link-youtube" target="_blank">YouTube</a>
+                    <a href="https://www.twitch.tv/10thedragon" class="link-item link-twitch" target="_blank">Twitch</a>
                     <a href="https://discord.gg/pqqkzVaHDV" class="link-item link-discord" target="_blank">Discord Server</a>
                     <a href="https://bsky.app/profile/10thedragon.bsky.social" class="link-item link-bluesky" target="_blank">Bluesky</a>
                     <a href="https://twitter.com/10TheDragon" class="link-item link-twitter" target="_blank">Twitter</a>
-                    <a href="https://www.tiktok.com/@10thedragon" class="link-item link-tiktok" target="_blank">TikTok</a>
                     <a href="https://www.instagram.com/10thedragon/" class="link-item link-instagram" target="_blank">Instagram</a>
                     <a href="https://www.tumblr.com/blog/10thedragon" class="link-item link-tumblr" target="_blank">Tumblr</a>
+                    <a href="https://www.tiktok.com/@10thedragon" class="link-item link-tiktok" target="_blank">TikTok</a>
                     <a href="https://www.reddit.com/user/10thedragon/" class="link-item link-reddit" target="_blank">Reddit</a>
                     <a href="https://letterboxd.com/10TheDragon/" class="link-item link-letterboxd" target="_blank">Letterboxd</a>
-                    <a href="https://www.twitch.tv/10thedragon" class="link-item link-twitch" target="_blank">Twitch</a>
-                    <a href="https://www.youtube.com/channel/UC6X8LvFZZPLAcWIA_RAiGsw" class="link-item link-youtube" target="_blank">YouTube</a>
+                    <a href="https://backloggd.com/u/10TheDragon/" class="link-item link-backloggd" target="_blank">Backloggd</a>
                 </div>
 
                 <h2 class="section-title">Creative</h2>
                 <div class="links-grid">
-                    <a href="https://artfight.net/~10TheDragon" class="link-item link-artfight" target="_blank">Art Fight</a>
                     <a href="https://toyhou.se/10TheDragon" class="link-item link-toyhouse" target="_blank">Toyhouse</a>
+                    <a href="https://artfight.net/~10TheDragon" class="link-item link-artfight" target="_blank">Art Fight</a>
                     <a href="https://www.furaffinity.net/user/10thedragon" class="link-item link-furaffinity" target="_blank">FurAffinity</a>
                     <a href="https://www.furaffinity.net/user/tpn10" class="link-item link-furaffinity" target="_blank">FurAffinity Alt</a>
                     <a href="https://www.deviantart.com/10thedragon" class="link-item link-deviantart" target="_blank">DeviantArt</a>
@@ -1677,12 +1826,12 @@
 
                 <h2 class="section-title">Music</h2>
                 <div class="links-grid">
-                    <a href="https://bandcamp.com/10thedragon" class="link-item link-bandcamp" target="_blank">Bandcamp Fan</a>
-                    <a href="https://10thedragon.bandcamp.com/" class="link-item link-bandcamp" target="_blank">Bandcamp Artist</a>
-                    <a href="https://soundcloud.com/10thedragon" class="link-item link-soundcloud" target="_blank">SoundCloud</a>
                     <a href="https://www.last.fm/user/TenTheDragon" class="link-item link-lastfm" target="_blank">Last.fm</a>
-                    <a href="https://www.discogs.com/user/10TheDragon" class="link-item link-discogs" target="_blank">Discogs</a>
+                    <a href="https://10thedragon.bandcamp.com/" class="link-item link-bandcamp" target="_blank">Bandcamp Artist</a>
+                    <a href="https://bandcamp.com/10thedragon" class="link-item link-bandcamp" target="_blank">Bandcamp Fan</a>
+                    <a href="https://soundcloud.com/10thedragon" class="link-item link-soundcloud" target="_blank">SoundCloud</a>
                     <a href="https://open.spotify.com/user/tpn10" class="link-item link-spotify" target="_blank">Spotify</a>
+                    <a href="https://www.discogs.com/user/10TheDragon" class="link-item link-discogs" target="_blank">Discogs</a>
                 </div>
 
                 <h2 class="section-title">Gaming</h2>
@@ -1703,8 +1852,8 @@
 
                 <h2 class="section-title">Support</h2>
                 <div class="links-grid">
-                    <a href="https://ko-fi.com/10thedragon" class="link-item link-kofi" target="_blank">Ko-fi</a>
                     <a href="https://www.patreon.com/10TheDragon" class="link-item link-patreon" target="_blank">Patreon</a>
+                    <a href="https://ko-fi.com/10thedragon" class="link-item link-kofi" target="_blank">Ko-fi</a>
                     <a href="https://store.steampowered.com/wishlist/id/10TheDragon/" class="link-item link-steam" target="_blank">Steam Wishlist</a>
                 </div>
             </div>
@@ -1727,7 +1876,7 @@
             </div>
 
             <div class="subpage-content" id="subpage-secret">
-                <h2 class="section-title">Secret Dragon Hoard</h2>
+                <h2 class="section-title">Secret NSFW / 18+</h2>
                 <div class="links-grid">
                     <a href="https://www.f-list.net/c/10thedragon" class="link-item link-flist" target="_blank">F-List</a>
                 </div>
@@ -1893,6 +2042,7 @@
             accessibilityFont: false,
             themeMode: 'auto',
             lastfmDisplay: true,
+            eventsDisplay: true,
             timeFormat: '12h',
             nsfwAccepted: false,
             secretUnlocked: false,
@@ -1903,6 +2053,8 @@
         let currentPage = 'home';
         let currentSubpage = 'general';
         let lastfmPopoutTimer = null;
+        let eventsPopoutTimer = null;
+        let eventsPopoutShown = false;
         let konamiExpireTimer = null;
         let currentTrack = null;
         let trackStartTime = 0;
@@ -1945,6 +2097,7 @@
             document.getElementById('reduce-motion').checked = settings.reduceMotion;
             document.getElementById('theme-mode').value = settings.themeMode;
             document.getElementById('lastfm-display').checked = settings.lastfmDisplay;
+            document.getElementById('events-display').checked = settings.eventsDisplay;
             
             if (settings.themeMode === 'auto') {
                 updateThemeByTime();
@@ -2169,6 +2322,23 @@
             }
         });
 
+        document.getElementById('events-display').addEventListener('change', (e) => {
+            settings.eventsDisplay = e.target.checked;
+            saveSettings();
+            
+            if (!settings.eventsDisplay) {
+                document.getElementById('events-popout').classList.remove('visible');
+            }
+        });
+
+        document.getElementById('events-popout-close').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const popout = document.getElementById('events-popout');
+            clearTimeout(eventsPopoutTimer);
+            popout.classList.remove('visible', 'fading');
+        });
+
         document.getElementById('reset-settings').addEventListener('click', () => {
             if (confirm('Are you sure you want to reset all settings? This cannot be undone.')) {
                 localStorage.removeItem('tendragon-settings');
@@ -2344,6 +2514,79 @@
             lastfmPopoutTimer = setTimeout(() => {
                 popout.classList.remove('visible', 'fading');
             }, 5000);
+        }
+
+        // ===== Events Popout =====
+        // Each event defines when it's active and what it displays. The `isActive`
+        // function receives the current date components evaluated in US Central Time.
+        const SITE_EVENTS = [
+            {
+                id: 'artfight-2026',
+                label: 'Event · Art Fight',
+                accent: '#5acae9',
+                title: 'Art Fight is live!',
+                desc: 'Attack me on Art Fight — click to view my profile.',
+                url: 'https://artfight.net/~10TheDragon',
+                icon: 'images/artfightlogo.png',
+                // Active every July (month index 6), days 1-31, US Central Time
+                isActive: (cst) => cst.month === 6 && cst.day >= 1 && cst.day <= 31
+            }
+        ];
+
+        // Returns date parts (year, month 0-11, day) in US Central Time regardless
+        // of the visitor's local timezone, so the gating matches CST as intended.
+        function getCentralDateParts() {
+            const fmt = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Chicago',
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric'
+            });
+            const parts = fmt.formatToParts(new Date());
+            const lookup = {};
+            parts.forEach(p => { if (p.type !== 'literal') lookup[p.type] = parseInt(p.value, 10); });
+            return { year: lookup.year, month: lookup.month - 1, day: lookup.day };
+        }
+
+        function getActiveEvent() {
+            const cst = getCentralDateParts();
+            return SITE_EVENTS.find(ev => {
+                try { return ev.isActive(cst); } catch (e) { return false; }
+            }) || null;
+        }
+
+        function showEventsPopout() {
+            if (!settings.eventsDisplay) return;
+            if (eventsPopoutShown) return;
+
+            const event = getActiveEvent();
+            if (!event) return;
+
+            const popout = document.getElementById('events-popout');
+
+            // Populate content
+            popout.style.setProperty('--event-accent', event.accent);
+            document.getElementById('events-popout-label').textContent = event.label;
+            document.getElementById('events-popout-title').textContent = event.title;
+            document.getElementById('events-popout-desc').textContent = event.desc;
+            document.getElementById('events-popout-icon').src = event.icon;
+            document.getElementById('events-popout-link').href = event.url;
+
+            eventsPopoutShown = true;
+
+            popout.classList.remove('fading');
+            popout.classList.add('visible');
+
+            clearTimeout(eventsPopoutTimer);
+
+            // Visible ~22s, fade over the final 3s (total ~25s on screen)
+            setTimeout(() => {
+                popout.classList.add('fading');
+            }, 22000);
+
+            eventsPopoutTimer = setTimeout(() => {
+                popout.classList.remove('visible', 'fading');
+            }, 25000);
         }
 
         document.querySelectorAll('.folder-tab').forEach(tab => {
@@ -2654,6 +2897,9 @@
         updateTimeDisplay();
         fetchLastFM();
         handleRoute();
+
+        // Show the events popout once per page load, shortly after the page settles
+        setTimeout(showEventsPopout, 1500);
 
         setInterval(updateTimeDisplay, 1000);
         setInterval(() => {
