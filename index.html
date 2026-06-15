@@ -541,17 +541,17 @@
             z-index: 2;
         }
 
-        /* ===== Teaser variant: 3-color band background (orange|red|blue) + image texture + per-third glow ===== */
+        /* ===== Teaser variant: 3-color band background + image texture + per-third glow.
+           Band colors come from CSS vars set per-event (--band-left/mid/right). ===== */
         .events-popout.teaser {
-            /* Three vertical color bands: left orange, middle red, right blue */
             background: linear-gradient(
                 to right,
-                rgba(230, 110, 35, 0.85) 0%,
-                rgba(230, 110, 35, 0.85) 33.33%,
-                rgba(200, 45, 45, 0.85) 33.33%,
-                rgba(200, 45, 45, 0.85) 66.66%,
-                rgba(55, 170, 190, 0.85) 66.66%,
-                rgba(55, 170, 190, 0.85) 100%
+                color-mix(in srgb, var(--band-left, #e66e23) 85%, transparent) 0%,
+                color-mix(in srgb, var(--band-left, #e66e23) 85%, transparent) 33.33%,
+                color-mix(in srgb, var(--band-mid, #c82d2d) 85%, transparent) 33.33%,
+                color-mix(in srgb, var(--band-mid, #c82d2d) 85%, transparent) 66.66%,
+                color-mix(in srgb, var(--band-right, #37aabe) 85%, transparent) 66.66%,
+                color-mix(in srgb, var(--band-right, #37aabe) 85%, transparent) 100%
             );
             border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: none;
@@ -562,19 +562,19 @@
 
         /* Per-third glow halo: a blurred copy of the color bands sitting behind the
            panel, so each color radiates outward on all sides (incl. top & bottom)
-           of its own third — orange left, red middle, blue right. */
+           of its own third. */
         .events-popout.teaser .events-popout-glow {
             display: block;
             position: absolute;
             inset: -28%;
             background: linear-gradient(
                 to right,
-                rgba(235, 115, 35, 0.9) 0%,
-                rgba(235, 115, 35, 0.9) 33.33%,
-                rgba(205, 45, 45, 0.9) 33.33%,
-                rgba(205, 45, 45, 0.9) 66.66%,
-                rgba(55, 175, 195, 0.9) 66.66%,
-                rgba(55, 175, 195, 0.9) 100%
+                color-mix(in srgb, var(--band-left, #e66e23) 90%, transparent) 0%,
+                color-mix(in srgb, var(--band-left, #e66e23) 90%, transparent) 33.33%,
+                color-mix(in srgb, var(--band-mid, #c82d2d) 90%, transparent) 33.33%,
+                color-mix(in srgb, var(--band-mid, #c82d2d) 90%, transparent) 66.66%,
+                color-mix(in srgb, var(--band-right, #37aabe) 90%, transparent) 66.66%,
+                color-mix(in srgb, var(--band-right, #37aabe) 90%, transparent) 100%
             );
             filter: blur(26px);
             opacity: 0.8;
@@ -584,6 +584,7 @@
         }
 
         /* Faint blurred Art Fight image layered over the color bands as texture */
+        /* Blurred Art Fight image shows through behind the color bands */
         .events-popout.teaser .events-popout-bg {
             display: block;
             position: absolute;
@@ -591,10 +592,9 @@
             border-radius: 8px;
             background-size: cover;
             background-position: center;
-            filter: blur(8px) saturate(120%) brightness(0.85);
-            opacity: 0.4;
+            filter: blur(6px) saturate(125%) brightness(0.95);
+            opacity: 0.75;
             z-index: 1;
-            mix-blend-mode: overlay;
         }
 
         /* Dark scrim so white text stays readable over the colored background */
@@ -2648,68 +2648,87 @@
         }
 
         // ===== Events Popout =====
-        // Each event defines when it's active and what it displays. The `isActive`
-        // function receives the current date components evaluated in US Central Time.
-        // `variant: 'teaser'` uses the special blurred-image background style;
-        // anything else uses the standard theme-following panel.
-        const SITE_EVENTS = [
-            {
-                id: 'artfight-2026-teaser',
-                variant: 'teaser',
-                label: 'Coming Soon · Art Fight',
-                accent: '#5acae9',
-                title: 'Art Fight Soon!',
-                desc: '',
-                url: 'https://artfight.net/~10TheDragon',
-                icon: 'images/artfightlogo.png',
-                bgImage: 'images/aft26.png',
-                // June 14 @ 3:00 PM CST through end of June 30 (US Central Time)
-                isActive: (cst) => {
-                    if (cst.month !== 5) return false; // June (index 5)
-                    if (cst.day < 14 || cst.day > 30) return false;
-                    if (cst.day === 14 && cst.hour < 15) return false; // not before 3 PM on the 14th
-                    return true;
-                }
-            },
-            {
-                id: 'artfight-2026-main',
-                variant: 'main',
-                label: 'Event · Art Fight',
-                accent: '#5acae9',
-                title: 'Art Fight Now!',
-                desc: '',
-                url: 'https://artfight.net/~10TheDragon',
-                icon: 'images/artfightlogo.png',
-                // All of July (month index 6), days 1-31, US Central Time
-                isActive: (cst) => cst.month === 6 && cst.day >= 1 && cst.day <= 31
-            }
-        ];
+        // Events are defined in an external events.json file in the repo, so adding or
+        // editing an event never requires touching this HTML.
+        //
+        // Two scheduling modes:
+        //   • One-time event: "start"/"end" as full datetimes "YYYY-MM-DDTHH:MM".
+        //   • Annual event:   add "recurring": "annual" and write "start"/"end" with
+        //     no year, "MM-DDTHH:MM" (e.g. "07-01T00:00"). It repeats every year.
+        // All times are interpreted in US Central Time.
+        //
+        // "variant": "teaser" uses the special image/glow background (and may define
+        // "bandColors": [left, middle, right]); anything else uses the themed panel.
+        let SITE_EVENTS = [];
 
-        // Returns date parts (year, month 0-11, day, hour 0-23) in US Central Time
-        // regardless of the visitor's local timezone, so gating matches CST as intended.
-        function getCentralDateParts() {
+        async function loadEvents() {
+            try {
+                const res = await fetch('events.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('events.json not found');
+                const data = await res.json();
+                SITE_EVENTS = Array.isArray(data) ? data : [];
+            } catch (e) {
+                SITE_EVENTS = [];
+            }
+        }
+
+        // Date/time pieces of "now" in US Central Time, regardless of visitor timezone.
+        function getCentralNowParts() {
             const fmt = new Intl.DateTimeFormat('en-US', {
                 timeZone: 'America/Chicago',
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-                hour: 'numeric',
-                hour12: false
+                year: 'numeric', month: 'numeric', day: 'numeric',
+                hour: 'numeric', minute: 'numeric', hour12: false
             });
-            const parts = fmt.formatToParts(new Date());
-            const lookup = {};
-            parts.forEach(p => { if (p.type !== 'literal') lookup[p.type] = parseInt(p.value, 10); });
-            // Intl can return hour "24" at midnight; normalize to 0
-            let hour = lookup.hour;
-            if (hour === 24) hour = 0;
-            return { year: lookup.year, month: lookup.month - 1, day: lookup.day, hour: hour };
+            const p = {};
+            fmt.formatToParts(new Date()).forEach(x => { if (x.type !== 'literal') p[x.type] = parseInt(x.value, 10); });
+            return { year: p.year, month: p.month, day: p.day, hour: p.hour === 24 ? 0 : p.hour, minute: p.minute };
+        }
+
+        // Full comparable value including the year (for one-time events).
+        function fullValue(y, mo, d, h, mi) {
+            return ((((y * 12 + (mo - 1)) * 31 + (d - 1)) * 24 + h) * 60) + mi;
+        }
+
+        // Comparable value ignoring the year (for annual events) — position within a year.
+        function dayValue(mo, d, h, mi) {
+            return ((((mo - 1) * 31 + (d - 1)) * 24 + h) * 60) + mi;
+        }
+
+        // Parse "YYYY-MM-DDTHH:MM" → full value.
+        function parseFull(str) {
+            const m = String(str || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);
+            if (!m) return null;
+            return fullValue(+m[1], +m[2], +m[3], m[4] ? +m[4] : 0, m[5] ? +m[5] : 0);
+        }
+
+        // Parse "MM-DDTHH:MM" (no year) → day value.
+        function parseAnnual(str) {
+            const m = String(str || '').match(/^(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);
+            if (!m) return null;
+            return dayValue(+m[1], +m[2], m[3] ? +m[3] : 0, m[4] ? +m[4] : 0);
+        }
+
+        function isEventActive(ev, now) {
+            if (ev.recurring === 'annual') {
+                const start = parseAnnual(ev.start);
+                const end = parseAnnual(ev.end);
+                if (start === null || end === null) return false;
+                const nowVal = dayValue(now.month, now.day, now.hour, now.minute);
+                // Normal window within a year, or one that wraps past New Year.
+                return start <= end ? (nowVal >= start && nowVal <= end)
+                                    : (nowVal >= start || nowVal <= end);
+            } else {
+                const start = parseFull(ev.start);
+                const end = parseFull(ev.end);
+                if (start === null || end === null) return false;
+                const nowVal = fullValue(now.year, now.month, now.day, now.hour, now.minute);
+                return nowVal >= start && nowVal <= end;
+            }
         }
 
         function getActiveEvent() {
-            const cst = getCentralDateParts();
-            return SITE_EVENTS.find(ev => {
-                try { return ev.isActive(cst); } catch (e) { return false; }
-            }) || null;
+            const now = getCentralNowParts();
+            return SITE_EVENTS.find(ev => isEventActive(ev, now)) || null;
         }
 
         function showEventsPopout() {
@@ -2722,11 +2741,20 @@
             const popout = document.getElementById('events-popout');
             const bgEl = document.getElementById('events-popout-bg');
 
-            // Apply variant styling: teaser = special blurred-image background,
+            // Apply variant styling: teaser = special image/glow background,
             // main = standard theme-following panel.
             if (event.variant === 'teaser') {
                 popout.classList.add('teaser');
-                bgEl.style.backgroundImage = `url('${event.bgImage}')`;
+                bgEl.style.backgroundImage = event.bgImage ? `url('${event.bgImage}')` : '';
+
+                // Three band colors (left, middle, right). Falls back to the Art Fight
+                // defaults if an event doesn't specify its own.
+                const defaults = ['#e66e23', '#c82d2d', '#37aabe'];
+                const bands = Array.isArray(event.bandColors) && event.bandColors.length === 3
+                    ? event.bandColors : defaults;
+                popout.style.setProperty('--band-left', bands[0]);
+                popout.style.setProperty('--band-mid', bands[1]);
+                popout.style.setProperty('--band-right', bands[2]);
             } else {
                 popout.classList.remove('teaser');
                 bgEl.style.backgroundImage = '';
@@ -3069,8 +3097,10 @@
         fetchLastFM();
         handleRoute();
 
-        // Show the events popout once per page load, shortly after the page settles
-        setTimeout(showEventsPopout, 1500);
+        // Load events from events.json, then show the popout once the page settles
+        loadEvents().then(() => {
+            setTimeout(showEventsPopout, 1500);
+        });
 
         setInterval(updateTimeDisplay, 1000);
         setInterval(() => {
