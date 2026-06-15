@@ -1,0 +1,29 @@
+[
+  {
+    "id": "artfight-2026-teaser",
+    "variant": "teaser",
+    "label": "Coming Soon · Art Fight",
+    "accent": "#5acae9",
+    "title": "Art Fight Soon!",
+    "desc": "",
+    "url": "https://artfight.net/~10TheDragon",
+    "icon": "images/artfightlogo.png",
+    "bgImage": "images/aft26.png",
+    "bandColors": ["#e66e23", "#c82d2d", "#37aabe"],
+    "start": "2026-06-14T15:00",
+    "end": "2026-06-30T23:59"
+  },
+  {
+    "id": "artfight-main",
+    "variant": "main",
+    "label": "Event · Art Fight",
+    "accent": "#5acae9",
+    "title": "Art Fight Now!",
+    "desc": "",
+    "url": "https://artfight.net/~10TheDragon",
+    "icon": "images/artfightlogo.png",
+    "recurring": "annual",
+    "start": "07-01T00:00",
+    "end": "07-31T23:59"
+  }
+]
