@@ -312,6 +312,61 @@
             display: block;
         }
 
+        /* ===== Image lightbox ===== */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-image {
+            max-width: 90vw;
+            max-height: 88vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--panel-border-hover);
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 40px;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+            z-index: 301;
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+
+        /* Indicate enlargeable character art on hover */
+        .character-detail-image img {
+            cursor: zoom-in;
+        }
+
         .close-btn {
             position: absolute;
             top: 20px;
@@ -928,7 +983,14 @@
             font-size: 48px;
             font-weight: 700;
             margin-bottom: 15px;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-highlight));
+            background: linear-gradient(135deg, var(--accent-highlight), color-mix(in srgb, var(--accent-highlight) 70%, #ffffff));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.light-theme .main-title {
+            background: linear-gradient(135deg, #00785f, color-mix(in srgb, #00785f 75%, #00b389));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1149,6 +1211,24 @@
         }
 
         .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .section-subtitle {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 40px 0 20px 0;
+            color: var(--accent-highlight);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        body.light-theme .section-subtitle {
+            color: #00785f;
+            font-weight: 800;
+        }
+
+        .section-subtitle:first-child {
             margin-top: 0;
         }
 
@@ -1392,6 +1472,11 @@
             font-size: 14px;
             text-align: center;
             padding: 20px;
+            min-height: 120px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: rgba(0, 200, 150, 0.05);
             border: 2px dashed rgba(0, 200, 150, 0.3);
             border-radius: 8px;
@@ -1829,9 +1914,15 @@
         </div>
     </div>
 
+    <div class="lightbox-overlay" id="lightbox-overlay">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">×</button>
+        <img class="lightbox-image" id="lightbox-image" src="" alt="">
+    </div>
+
     <div class="mobile-menu" id="mobile-menu">
         <button class="mobile-menu-close" id="mobile-menu-close">×</button>
         <a href="#/" class="mobile-menu-item active" data-page="home">🏠 Home</a>
+        <a href="#/about" class="mobile-menu-item" data-page="about">📖 About</a>
         <a href="#/links" class="mobile-menu-item" data-page="links">🔗 Links</a>
         <a href="#/projects" class="mobile-menu-item" data-page="projects">💼 Projects</a>
         <a href="#/characters" class="mobile-menu-item" data-page="characters">👤 Characters</a>
@@ -1849,6 +1940,7 @@
             <button id="settings-trigger" class="settings-trigger">⚙</button>
             <div class="page-indicator-dots" id="page-dots">
                 <div class="page-dot active" data-page="home"></div>
+                <div class="page-dot" data-page="about"></div>
                 <div class="page-dot" data-page="links"></div>
                 <div class="page-dot" data-page="projects"></div>
                 <div class="page-dot" data-page="characters"></div>
@@ -1859,6 +1951,7 @@
         
         <div class="nav-tabs">
             <button class="folder-tab active" data-page="home">Home</button>
+            <button class="folder-tab" data-page="about">About</button>
             <button class="folder-tab" data-page="links">Links</button>
             <button class="folder-tab" data-page="projects">Projects</button>
             <button class="folder-tab" data-page="characters">Characters</button>
@@ -1882,40 +1975,44 @@
 
     <main class="page-content active" id="page-home">
         <div class="landing-page">
-            <div class="landing-content glass-panel">
+            <div class="landing-content">
                 <h1 class="main-title">10TheDragon</h1>
                 <p class="tagline" id="tagline">welcome to my website</p>
                 
                 <div class="hero-art">
-                    <div class="art-placeholder">
-                        [ Image Placeholder ]
-                        <a href="https://www.last.fm/user/TenTheDragon" target="_blank" class="lastfm-embed" id="lastfm-player">
-                            <div class="lastfm-embed-top">
-                                <div class="track-info" style="text-align: center; width: 100%;">
-                                    <p class="track-name">Loading...</p>
-                                    <p class="track-artist" style="font-size: 12px; opacity: 0.6;">Check Last.fm</p>
-                                </div>
+                    <a href="https://www.last.fm/user/TenTheDragon" target="_blank" class="lastfm-embed" id="lastfm-player">
+                        <div class="lastfm-embed-top">
+                            <div class="track-info" style="text-align: center; width: 100%;">
+                                <p class="track-name">Loading...</p>
+                                <p class="track-artist" style="font-size: 12px; opacity: 0.6;">Check Last.fm</p>
                             </div>
-                            <div class="progress-bar-container" id="player-progress" style="display: none;">
-                                <div class="progress-bar">
-                                    <div class="progress-bar-fill" id="player-progress-fill"></div>
-                                </div>
-                                <div class="progress-times">
-                                    <span id="player-elapsed">0:00</span>
-                                    <span id="player-total">0:00</span>
-                                </div>
+                        </div>
+                        <div class="progress-bar-container" id="player-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="player-progress-fill"></div>
                             </div>
-                        </a>
-                    </div>
+                            <div class="progress-times">
+                                <span id="player-elapsed">0:00</span>
+                                <span id="player-total">0:00</span>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
+        </div>
+    </main>
+
+    <main class="page-content" id="page-about">
+        <div class="content-container">
+            <h1 class="section-title">About</h1>
+            <p>Coming soon...</p>
         </div>
     </main>
 
     <main class="page-content with-subnav" id="page-links">
         <div class="content-container">
             <div class="subpage-content active" id="subpage-general">
-                <h2 class="section-title">Socials</h2>
+                <h2 class="section-subtitle">Socials</h2>
                 <div class="links-grid">
                     <a href="https://en.pronouns.page/@10TheDragon" class="link-item link-pronouns" target="_blank">Pronouns.page</a>
                     <a href="https://www.youtube.com/channel/UC6X8LvFZZPLAcWIA_RAiGsw" class="link-item link-youtube" target="_blank">YouTube</a>
@@ -1931,7 +2028,7 @@
                     <a href="https://backloggd.com/u/10TheDragon/" class="link-item link-backloggd" target="_blank">Backloggd</a>
                 </div>
 
-                <h2 class="section-title">Creative</h2>
+                <h2 class="section-subtitle">Creative</h2>
                 <div class="links-grid">
                     <a href="https://toyhou.se/10TheDragon" class="link-item link-toyhouse" target="_blank">Toyhouse</a>
                     <a href="https://artfight.net/~10TheDragon" class="link-item link-artfight" target="_blank">Art Fight</a>
@@ -1940,7 +2037,7 @@
                     <a href="https://www.deviantart.com/10thedragon" class="link-item link-deviantart" target="_blank">DeviantArt</a>
                 </div>
 
-                <h2 class="section-title">Music</h2>
+                <h2 class="section-subtitle">Music</h2>
                 <div class="links-grid">
                     <a href="https://www.last.fm/user/TenTheDragon" class="link-item link-lastfm" target="_blank">Last.fm</a>
                     <a href="https://10thedragon.bandcamp.com/" class="link-item link-bandcamp" target="_blank">Bandcamp Artist</a>
@@ -1950,7 +2047,7 @@
                     <a href="https://www.discogs.com/user/10TheDragon" class="link-item link-discogs" target="_blank">Discogs</a>
                 </div>
 
-                <h2 class="section-title">Gaming</h2>
+                <h2 class="section-subtitle">Gaming</h2>
                 <div class="links-grid">
                     <a href="https://steamcommunity.com/id/10TheDragon/" class="link-item link-steam" target="_blank">Steam</a>
                     <a href="https://www.roblox.com/users/130197445/profile" class="link-item link-roblox" target="_blank">Roblox</a>
@@ -1961,12 +2058,12 @@
                     <a href="https://scratch.mit.edu/users/TPN10/" class="link-item link-scratch" target="_blank">Scratch</a>
                 </div>
 
-                <h2 class="section-title">Development</h2>
+                <h2 class="section-subtitle">Development</h2>
                 <div class="links-grid">
                     <a href="https://github.com/10TheDragon" class="link-item link-github" target="_blank">GitHub</a>
                 </div>
 
-                <h2 class="section-title">Support</h2>
+                <h2 class="section-subtitle">Support</h2>
                 <div class="links-grid">
                     <a href="https://www.patreon.com/10TheDragon" class="link-item link-patreon" target="_blank">Patreon</a>
                     <a href="https://ko-fi.com/10thedragon" class="link-item link-kofi" target="_blank">Ko-fi</a>
@@ -1983,7 +2080,7 @@
                 </div>
 
                 <div class="nsfw-content" id="nsfw-links">
-                    <h2 class="section-title">18+ Socials</h2>
+                    <h2 class="section-subtitle">18+ Socials</h2>
                     <div class="links-grid">
                         <a href="https://bsky.app/profile/10thedragonnsfw.bsky.social" class="link-item link-bluesky" target="_blank">Bluesky [18+]</a>
                         <a href="https://x.com/10thedragonNSFW" class="link-item link-twitter" target="_blank">Twitter [18+]</a>
@@ -2006,7 +2103,7 @@
             <div class="projects-grid">
                 <a href="https://github.com/10TheDragon/bss-values-index" target="_blank" class="project-card">
                     <div class="project-image">
-                        <div class="image-placeholder">BSS Project Thumbnail (images/bss-thumb.png)</div>
+                        <div class="image-placeholder"></div>
                     </div>
                     <div class="project-content">
                         <h3 class="project-title">BSS Values Index</h3>
@@ -2025,7 +2122,7 @@
                 <div class="character-card" data-character="ten">
                     <a href="#/characters/ten" class="character-card-link">
                         <div class="character-image">
-                            <div class="image-placeholder">Ten PFP Placeholder (images/ten-pfp.png)</div>
+                            <div class="image-placeholder"></div>
                             <button class="image-carousel-btn prev" onclick="changeCharacterImage('ten', -1); event.preventDefault();">❮</button>
                             <button class="image-carousel-btn next" onclick="changeCharacterImage('ten', 1); event.preventDefault();">❯</button>
                         </div>
@@ -2036,7 +2133,7 @@
                                 <span class="character-tag">oc</span>
                                 <span class="character-tag">dragon</span>
                             </div>
-                            <p class="character-description">The very first sona I ever created. I use him mainly as a representation of me in real life, sharing similar traits and characteristics that are more outwardly shown through him. He is essentially me as he shares my exact age and ideals.</p>
+                            <p class="character-description" data-char-desc="ten"></p>
                         </div>
                     </a>
                     <a href="https://toyhou.se/16981375.ten" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
@@ -2044,7 +2141,7 @@
                 <div class="character-card" data-character="js05">
                     <a href="#/characters/js05" class="character-card-link">
                         <div class="character-image">
-                            <div class="image-placeholder">JS-05 Image Placeholder 1 (images/js05-1.png)</div>
+                            <div class="image-placeholder"></div>
                             <button class="image-carousel-btn prev" onclick="changeCharacterImage('js05', -1); event.preventDefault();">❮</button>
                             <button class="image-carousel-btn next" onclick="changeCharacterImage('js05', 1); event.preventDefault();">❯</button>
                         </div>
@@ -2055,7 +2152,7 @@
                                 <span class="character-tag">protogen</span>
                                 <span class="character-tag">robot</span>
                             </div>
-                            <p class="character-description">Jack Smith is an elusive and rare entity to encounter in the facility. He will cause blackouts and is hard to escape from as he tricks his victims with his glitching-like behavior. Don't let him catch you. Once you are doomed and in complete darkness, he will appear.</p>
+                            <p class="character-description" data-char-desc="js05"></p>
                         </div>
                     </a>
                     <a href="https://toyhou.se/25017744.jack-smith" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
@@ -2071,7 +2168,7 @@
             <h1 class="section-title">Ten</h1>
             <div class="character-detail-page">
                 <div class="character-detail-image">
-                    <div class="image-placeholder" style="font-size: 16px;">Ten Full Art Placeholder (images/ten-full.png)</div>
+                    <div class="image-placeholder"></div>
                 </div>
                 <div class="character-detail-content">
                     <div class="character-tags">
@@ -2079,7 +2176,7 @@
                         <span class="character-tag">oc</span>
                         <span class="character-tag">dragon</span>
                     </div>
-                    <p class="character-description">The very first sona I ever created. I use him mainly as a representation of me in real life, sharing similar traits and characteristics that are more outwardly shown through him. He is essentially me as he shares my exact age and ideals.</p>
+                    <p class="character-description" data-char-desc="ten"></p>
                     <a href="https://toyhou.se/16981375.ten" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
                     <p style="color: var(--text-muted); font-size: 14px; margin-top: 40px;">More content coming soon...</p>
                 </div>
@@ -2093,7 +2190,7 @@
             <h1 class="section-title">JS-05 (Jack Smith)</h1>
             <div class="character-detail-page">
                 <div class="character-detail-image">
-                    <div class="image-placeholder" style="font-size: 16px;">JS-05 Full Art Placeholder (images/js05-full.png)</div>
+                    <div class="image-placeholder"></div>
                 </div>
                 <div class="character-detail-content">
                     <div class="character-tags">
@@ -2101,7 +2198,7 @@
                         <span class="character-tag">protogen</span>
                         <span class="character-tag">robot</span>
                     </div>
-                    <p class="character-description">Jack Smith is an elusive and rare entity to encounter in the facility. He will cause blackouts and is hard to escape from as he tricks his victims with his glitching-like behavior. Don't let him catch you. Once you are doomed and in complete darkness, he will appear.</p>
+                    <p class="character-description" data-char-desc="js05"></p>
                     <a href="https://toyhou.se/25017744.jack-smith" target="_blank" class="toyhouse-link">View on Toyhouse →</a>
                     <p style="color: var(--text-muted); font-size: 14px; margin-top: 40px;">More content coming soon...</p>
                 </div>
@@ -2507,7 +2604,7 @@
             const deltaY = touchEndY - touchStartY;
             
             if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-                const pages = ['home', 'links', 'projects', 'characters', 'commissions', 'other'];
+                const pages = ['home', 'about', 'links', 'projects', 'characters', 'commissions', 'other'];
                 const currentIndex = pages.indexOf(currentPage);
                 
                 if (deltaX > 0 && currentIndex > 0) {
@@ -3091,10 +3188,64 @@
             }, 150);
         }
 
+        // Single source of truth for character descriptions. Edit here once and both
+        // the character card and the detail page update together.
+        const CHARACTER_DESC = {
+            'ten': "The very first sona I ever created. I use him mainly as a representation of me in real life, sharing similar traits and characteristics that are more outwardly shown through him. He is essentially me as he shares my exact age and ideals.",
+            'js05': "Jack Smith is an elusive and rare entity to encounter in the facility. He will cause blackouts and is hard to escape from as he tricks his victims with his glitching-like behavior. Don't let him catch you. Once you are doomed and in complete darkness, he will appear."
+        };
+
+        function applyCharacterDescriptions() {
+            document.querySelectorAll('[data-char-desc]').forEach(el => {
+                const id = el.getAttribute('data-char-desc');
+                if (CHARACTER_DESC[id]) el.textContent = CHARACTER_DESC[id];
+            });
+        }
+
+        // ===== Image lightbox =====
+        // Opens when a real character image is clicked. Empty placeholders have no
+        // <img>, so they simply do nothing until art is added.
+        const lightboxOverlay = document.getElementById('lightbox-overlay');
+        const lightboxImage = document.getElementById('lightbox-image');
+
+        function openLightbox(src, alt) {
+            lightboxImage.src = src;
+            lightboxImage.alt = alt || '';
+            lightboxOverlay.classList.add('active');
+        }
+
+        function closeLightbox() {
+            lightboxOverlay.classList.remove('active');
+            lightboxImage.src = '';
+        }
+
+        // Delegate clicks: a real <img> in a character detail image opens the lightbox.
+        // (Card thumbnails stay as navigation to the detail page.)
+        document.addEventListener('click', (e) => {
+            const img = e.target.closest('.character-detail-image img');
+            if (img && img.src) {
+                e.preventDefault();
+                e.stopPropagation();
+                openLightbox(img.src, img.alt);
+            }
+        });
+
+        lightboxOverlay.addEventListener('click', closeLightbox);
+        document.getElementById('lightbox-close').addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightboxOverlay.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+
         loadSettings();
         setRandomTagline();
         updateTimeDisplay();
         fetchLastFM();
+        applyCharacterDescriptions();
         handleRoute();
 
         // Load events from events.json, then show the popout once the page settles
